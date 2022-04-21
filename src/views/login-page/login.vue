@@ -42,6 +42,7 @@
           width="380px"
           height="46px"
           style="background: #13cd61; color: #fff"
+          @click="$router.push('/')"
         >
           kirish
         </v-btn>

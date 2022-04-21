@@ -103,6 +103,7 @@ export default {
   font-weight: 400;
   font-size: 18px;
   margin-left: 24px;
+  width: 200px;
 }
 .left-block {
   width: 100%;

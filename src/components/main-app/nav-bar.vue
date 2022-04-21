@@ -51,7 +51,7 @@
               :key="item.title"
               v-model="item.active"
               no-action
-              @click="changeActive('dashboard')"
+              @click="changeActive('dashboard', item)"
               class="border"
             >
               <template v-slot:activator>
@@ -90,7 +90,12 @@
                 ></div>
               </template>
 
-              <v-list-item v-for="child in item.items" :key="child.title">
+              <v-list-item
+                v-for="child in item.items"
+                :key="child.title"
+                :to="child.to"
+                @click="setName(child.title, child)"
+              >
                 <v-list-item-content>
                   <v-list-item-title
                     class="child"
@@ -116,7 +121,7 @@
               :key="item.title"
               v-model="item.active"
               no-action
-              @click="changeActive('items')"
+              @click="changeActive('items', item)"
               class="border"
             >
               <template v-slot:activator>
@@ -155,7 +160,12 @@
                 ></div>
               </template>
 
-              <v-list-item v-for="child in item.items" :key="child.title">
+              <v-list-item
+                v-for="child in item.items"
+                :key="child.title"
+                :to="child.to"
+                @click="setName(child.title, child)"
+              >
                 <v-list-item-content>
                   <v-list-item-title
                     class="child"
@@ -180,7 +190,7 @@
               :key="item.title"
               v-model="item.active"
               no-action
-              @click="changeActive('admin')"
+              @click="changeActive('admin', item)"
               class="border"
             >
               <template v-slot:activator>
@@ -219,7 +229,12 @@
                 ></div>
               </template>
 
-              <v-list-item v-for="child in item.items" :key="child.title">
+              <v-list-item
+                v-for="child in item.items"
+                :key="child.title"
+                :to="child.to"
+                @click="setName(child.title, child)"
+              >
                 <v-list-item-content>
                   <v-list-item-title
                     class="child"
@@ -255,7 +270,12 @@ export default {
         {
           icon_active: dashboard_active,
           icons_noactive: dashboard_noactive,
-          items: [],
+          items: [
+            {
+              title: "Dashboard",
+              to: "/",
+            },
+          ],
           title: "Dashboard",
         },
       ],
@@ -264,7 +284,10 @@ export default {
           icon_active: message_active,
           icons_noactive: message_noactive,
           active: false,
-          items: [{ title: "Kiruvchi" }, { title: "Chiquvchi" }],
+          items: [
+            { title: "Kiruvchi", to: "/incoming" },
+            { title: "Chiquvchi", to: "/outgoing" },
+          ],
           title: "Murojaatlar",
         },
         {
@@ -272,10 +295,10 @@ export default {
           icons_noactive: settings_noactive,
           active: false,
           items: [
-            { title: "Guruhlar" },
-            { title: "Departamentlar" },
-            { title: "Murojaat turi" },
-            { title: "Baholash mezoni" },
+            { title: "Guruhlar", to: "/groups" },
+            { title: "Departamentlar", to: "/departments" },
+            { title: "Murojaat turi", to: "/references-type" },
+            { title: "Baholash mezoni", to: "/evaluation-criteria" },
           ],
           title: "Sozlamalar",
         },
@@ -286,9 +309,9 @@ export default {
           icons_noactive: admin_noactive,
           active: false,
           items: [
-            { title: "Barcha murojaatlar" },
-            { title: "Rad etilganlar" },
-            { title: "Bekor qilinganlar" },
+            { title: "Barcha murojaatlar", to: "/all-references" },
+            { title: "Rad etilganlar", to: "/rejected" },
+            { title: "Bekor qilinganlar", to: "/canceled" },
           ],
           title: "Admin panel",
         },
@@ -297,24 +320,24 @@ export default {
   },
 
   methods: {
-    goDashboardPage() {
-      localStorage.setItem("page_name", this.$route.name);
-      this.$store.dispatch("path/setPageName", this.$route.name);
-      console.log();
-      if (this.$route.path !== "/") {
-        this.$router.push("/");
-      }
+    setName(title, page) {
+      localStorage.setItem("to", page.to);
+      localStorage.setItem("page_name", title);
+      this.$store.dispatch("path/setPageName", title);
     },
-    changeActive(isChange) {
+    changeActive(isChange, item) {
       if (isChange === "dashboard") {
         this.items.forEach((el) => (el.active = false));
         this.admin.forEach((el) => (el.active = false));
+        this.$store.dispatch("path/setPageName", item.title);
       } else if (isChange === "items") {
         this.dashboard.forEach((el) => (el.active = false));
         this.admin.forEach((el) => (el.active = false));
+        this.$store.dispatch("path/setPageName", item.title);
       } else if (isChange === "admin") {
         this.items.forEach((el) => (el.active = false));
         this.dashboard.forEach((el) => (el.active = false));
+        this.$store.dispatch("path/setPageName", item.title);
       }
     },
   },

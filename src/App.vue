@@ -8,6 +8,11 @@
 export default {
   name: "App",
 
+  created() {
+    let to = localStorage.getItem("to");
+    this.$router.push(to);
+  },
+
   data() {
     return {};
   },
